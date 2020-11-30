@@ -2,7 +2,7 @@
     const result = await fetchAPI('./articles/hoge.md', null, 'get');
 
     document.getElementById('article1').innerHTML =
-        marked(result.text());
+        marked(result);
 })();
 
 
@@ -33,7 +33,7 @@ async function fetchAPI(url, formData, method = 'post') {
             if (response == null) {
                 return null;
             }
-            return response.json();
+            return response.text();
         })
         .catch(error => {
             return error;
