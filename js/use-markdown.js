@@ -6,23 +6,31 @@
     const articleElms = document.querySelectorAll('[data-article]')
 
     // 記事要素にMarkdown記事を流し込む
-    for (let index = 0; index < config.topArticleCounts; index++) {
-        const article = config.articles[index]
-        console.log(article.title)
-        articleElms[index].innerHTML = marked(await getArticleBody(article.title))
+    let elmIndex = 0;
+    for (let articleIndex = 0; elmIndex < config.topArticleCounts; articleIndex++) {
+        const article = config.articles[articleIndex]
 
+        //非公開記事、予約投稿記事は表示しない。
+        if (article.isPublished && dayjs(article.publishedDate, 'YYYYMMDD') <= dayjs()) {
+            console.log(articleIndex)
+            console.log(elmIndex)
+            console.log(article)
+            articleElms[elmIndex].innerHTML = marked(await getArticleBody(article))
+            ++elmIndex
+        } else {
+            ++articleIndex
+        }
     }
-
 })()
 
 
 /**
  * Markdown記事の最初の---から2度目の---を取り除き、
  * 記事本文をgetAPIで取得する
- * @param {String} title タイトルファイル名
+ * @param {Object} article 記事オブジェクト (config.articles)
  */
-async function getArticleBody(title) {
-    let result = await fetchAPI('./articles/' + title + '.md', null, 'get')
+async function getArticleBody(article) {
+    let result = await fetchAPI('./articles/' + article.title + '.md?' + article.updatedDate, null, 'get')
     result = result.replace(/---/i, "")
     const indexs = result.indexOf('---')
     const honbun = result.substr(indexs + 4, result.length)
