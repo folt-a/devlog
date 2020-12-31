@@ -1,5 +1,5 @@
 (async function () {
-    const result = await fetchAPI('./articles/test.md', null, 'get');
+    const result = await fetchAPI('./articles/testa.md', null, 'get');
 
     document.getElementById('article1').innerHTML =
         marked(result);
